@@ -1,0 +1,25 @@
+FTP protokol
+
+3 základní typy zpráv:
+
+1. žádost o soubor (pouze klient → server)
+“GET FILE\n 
+Name: name_of_file \n
+\n“
+2. poslání souboru
+“FILE TRANSFER\n
+Name: name_of_file \n
+Size: size_of_file \n
+\n\n
+file_content”
+V hlaviččce se nachází jméno souboru a jeho velikost, je ukončena \n\n. Poté se ve zprávě nachází data.	
+
+
+3. hlášení o chybě (pouze server → klient)
+“ERROR err_id \n
+\n”
+Hlášení o chybě, err_id upřesňuje konkrétní chybu.
+10 – soubor nenalezen
+11– soubor nelze otevřít
+55 – interní chyba
+
