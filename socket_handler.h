@@ -16,6 +16,7 @@
 #include <iterator>
 #include <netinet/in.h>
 
+const bool DEBUG = true;
 
 using namespace std;
 
@@ -99,6 +100,10 @@ namespace sockets {
 	 * @return (ssize_t) number of bytes loaded
 	 */
 	ssize_t read_from_socket(int socket, unsigned long size, vector<char>& buffer);
+
+	namespace server{
+		int prepare_socket_and_int_vars(int port_number, sockaddr_in6 &sa, int &rc);
+	}
 }
 
 

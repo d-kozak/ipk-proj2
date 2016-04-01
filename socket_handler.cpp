@@ -70,11 +70,31 @@ namespace sockets {
 		return bytes_count;
 	}
 
-
 	namespace server{
-		// TODO add functions needed by server
-	}
+		int prepare_socket_and_int_vars(int port_number, sockaddr_in6 &sa, int &rc) {
+			int welcome_socket;
+			if ((welcome_socket = socket(PF_INET6, SOCK_STREAM, 0)) < 0) {
+				perror("ERROR: socket");
+				exit(EXIT_FAILURE);
+			}
 
+			memset(&sa, 0, sizeof(sa));
+			sa.sin6_family = AF_INET6;
+			sa.sin6_addr = in6addr_any;
+			sa.sin6_port = htons(port_number);
+
+
+			if ((rc = bind(welcome_socket, (struct sockaddr *) &sa, sizeof(sa))) < 0) {
+				perror("ERROR: bind");
+				exit(EXIT_FAILURE);
+			}
+			if ((listen(welcome_socket, 1)) < 0) {
+				perror("ERROR: listen");
+				exit(EXIT_FAILURE);
+			}
+			return welcome_socket;
+		}
+	}
 }
 
 /**

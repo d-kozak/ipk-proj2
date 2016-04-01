@@ -18,23 +18,35 @@
 
 using namespace std;
 
-enum message_id {
-	GET_FILE,
-	FILE_TRANSFER,
-	SUCCESS,
-	ERR_WRONG_MSG_RECEIVED,
-	ERR_FILE_NOT_FOUND = 10,
-	ERR_FILE_NOT_OPENED = 11,
-	ERR_INTERNAL = 55
-};
+namespace requests {
+	enum message_id {
+		GET_FILE,
+		FILE_TRANSFER,
+		SUCCESS,
+		ERR_WRONG_MSG_RECEIVED,
+		ERR_FILE_NOT_FOUND = 10,
+		ERR_FILE_NOT_OPENED = 11,
+		ERR_INTERNAL = 55
+	};
 
+	string create_eror_msg(message_id id);
+	string create_get_file_msg(string file_name);
+	string create_file_transfer_msg(string file_name, size_t file_size);
+	string create_file_transfer_msg_including_file_content(string file_name);
 
-string create_eror_msg(message_id id);
-string create_get_file_msg(string file_name);
-string create_file_transfer_msg(string file_name, size_t file_size);
+	message_id parse_response(vector<char> &response);
 
-message_id parse_response(vector<char> & response);
+	long remove_header_from_response(vector<char> &response, ssize_t &bytes_count);
 
-long remove_header_from_response(vector<char>& response,ssize_t & bytes_count);
+	namespace client {
+		void upload_requests(int socket, string file_name);
+		void download_request(int socket, string file_name);
+	}
+
+	namespace server{
+		void send_file(int socket,string file_name);
+		void store_file(int socket,vector<char>& buffer,ssize_t bytes_count);
+	}
+}
 
 #endif //IPK_PROJ2_PROTOKOL_PARSER_H

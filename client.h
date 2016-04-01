@@ -6,6 +6,10 @@
 #define IPK_PROJ2_CLIENT_H
 
 #include <iostream>
+#include <iterator>
+#include <fstream>
+#include <vector>
+#include <algorithm>
 
 #include "socket_handler.h"
 #include "protokol_parser.h"
