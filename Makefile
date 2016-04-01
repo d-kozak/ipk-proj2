@@ -13,13 +13,13 @@ CPPFLAGS= -std=c++11 -Wall -Wextra -pedantic -g
 CLIENT_NAME=client
 SERVER_NAME=server
 
-SERVER_FILES=server.o protokol_parser.o
-CLIENT_FILES=client.o protokol_parser.o
+SERVER_FILES=server.o protokol_parser.o socket_handler.o
+CLIENT_FILES=client.o protokol_parser.o socket_handler.o
 
 #seznamy vsech .cpp,.h a .o souboru
-OBJ=server.o client.o protokol_parser.o
-HEAD=server.h client.h protokol_parser.h
-SRC=server.cpp client.cpp protokol_parser.cpp
+OBJ=server.o client.o protokol_parser.o socket_handler.o
+HEAD=server.h client.h protokol_parser.h socket_handler.h
+SRC=server.cpp client.cpp protokol_parser.cpp socket_handler.cc
 
 .PHONY: build
 .PHONY: clean

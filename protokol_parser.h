@@ -25,6 +25,7 @@ enum message_id {
 	ERR_INTERNAL = 55
 };
 
+
 string create_eror_msg(message_id id);
 string create_get_file_msg(message_id id,string file_name);
 string create_file_transfer_msg(message_id id,string file_name, size_t file_size);
