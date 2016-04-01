@@ -34,7 +34,7 @@ namespace requests {
 	string create_file_transfer_msg(string file_name, size_t file_size);
 	string create_file_transfer_msg_including_file_content(string file_name);
 
-	message_id parse_response(vector<char> &response);
+	message_id parse_response(vector<char> *response);
 
 	long remove_header_from_response(vector<char> &response, ssize_t &bytes_count);
 

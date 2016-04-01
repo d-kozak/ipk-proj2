@@ -27,7 +27,7 @@ static void handle_connection(int comm_socket) {
 	ssize_t bytes_count = sockets::read_from_socket(comm_socket, sockets::HEADER_SIZE, buffer);
 
 	try {
-		switch (requests::parse_response(buffer)) {
+		switch (requests::parse_response(&buffer)) {
 			case requests::GET_FILE:
 				requests::server::send_file(comm_socket, buffer.data());
 				break;
