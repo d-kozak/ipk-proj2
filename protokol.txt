@@ -14,8 +14,10 @@ Size: size_of_file \n
 file_content”
 V hlaviččce se nachází jméno souboru a jeho velikost, je ukončena \n\n. Poté se ve zprávě nachází data.	
 
+3. potvrzovaci zprava
+"SUCCESS"
 
-3. hlášení o chybě (pouze server → klient)
+4. hlášení o chybě (pouze server → klient)
 “ERROR err_id \n
 \n”
 Hlášení o chybě, err_id upřesňuje konkrétní chybu.

@@ -21,6 +21,8 @@ using namespace std;
 enum message_id {
 	GET_FILE,
 	FILE_TRANSFER,
+	SUCCESS,
+	ERR_WRONG_MSG_RECEIVED,
 	ERR_FILE_NOT_FOUND = 10,
 	ERR_FILE_NOT_OPENED = 11,
 	ERR_INTERNAL = 55
@@ -28,9 +30,11 @@ enum message_id {
 
 
 string create_eror_msg(message_id id);
-string create_get_file_msg(message_id id,string file_name);
-string create_file_transfer_msg(message_id id,string file_name, size_t file_size);
+string create_get_file_msg(string file_name);
+string create_file_transfer_msg(string file_name, size_t file_size);
 
-message_id parse_response(vector<char> & response,string & ret_val);
+message_id parse_response(vector<char> & response);
+
+long remove_header_from_response(vector<char>& response,ssize_t & bytes_count);
 
 #endif //IPK_PROJ2_PROTOKOL_PARSER_H

@@ -22,7 +22,6 @@ using namespace std;
 enum ret_val {
 	EOK,
 	WRONG_ARGUMENTS,
-	URL_PARSE_ERROR,
 	SOCKET_ERROR,
 	GET_HOST_BY_NAME_ERROR,
 	CONNECT_ERROR,
