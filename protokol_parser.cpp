@@ -98,7 +98,7 @@ namespace requests {
 		}
 		else if (first_chars.compare("ERROR") == 0) {
 			throw BaseException("ERRR Message received", stoi(first_chars.data() + 5, NULL, 10));
-		} else if (first_chars.compare("GET F")) {
+		} else if (first_chars.compare("GET F") == 0) {
 			strip_response_just_to_file_name(response);
 			return GET_FILE;
 		} else if (first_chars.compare("FILE ") == 0) {
@@ -168,7 +168,7 @@ namespace requests {
 
 	namespace server {
 		static string get_file_name(vector<char> &buffer) {
-			static const char *name = "Name :";
+			static const char *name = "Name: ";
 			static const long __size = strlen(name);
 
 			char *start = strstr(buffer.data(), name);
