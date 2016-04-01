@@ -9,7 +9,7 @@
       <sourceFolder url="file://$MODULE_DIR$/protokol_parser.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/server.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/server.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/socket_handler.cc" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/socket_handler.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/socket_handler.h" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />

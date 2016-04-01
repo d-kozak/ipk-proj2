@@ -15,6 +15,8 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+
+#include "server.h"
    
 int main (int argc, const char * argv[]) {
 	int rc;
@@ -67,12 +69,15 @@ int main (int argc, const char * argv[]) {
 			}
 			
 			char buff[1024];
+			memset(buff,'\0',1024);
 			int res = 0;
 			for (;;)		
 			{	
 				res = recv(comm_socket, buff, 1024,0);
                 if (res <= 0)                
                     break;
+
+
                                                 			
 			    send(comm_socket, buff, strlen(buff), 0);
 			}

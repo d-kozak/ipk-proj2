@@ -6,7 +6,7 @@
 
 namespace sockets {
 
-	int prepare_socket(const Socket_info &socket_info) {
+	int prepare_socket(const SocketInfo &socket_info) {
 		int client_socket;
 		if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) <= 0) {
 			perror("ERROR: socket");
@@ -51,34 +51,29 @@ namespace sockets {
 		}
 	}
 
-	namespace server{
-		// TODO add methods needed by server
-	}
+	/**
+	 * read data from socket
+	 * @param (int) socket socket descriptor
+	 * @param (unsigned long) size of the buffer
+	 * @param (vector<char> &) buffer
+	 * @return (ssize_t) number of bytes loaded
+	 */
+	ssize_t read_from_socket(int socket, unsigned long size,vector<char>& buffer) {
+		buffer.resize(size);
 
-/**
- * gets response from socket
- * @param (int) socket socket descriptor
- * @return (vector<char> &) response used to return the content of the message
- */
-	vector<char> get_response(int socket) {
-		ssize_t bytes_count = 0;
-		vector<char> response;
-		response.resize(BUFFER_SIZE);
-
-		unsigned long size_of_vector = 0;
-		do {
-			size_of_vector += (unsigned long) bytes_count;
-			response.resize(size_of_vector + BUFFER_SIZE);
-		} while ((bytes_count = recv(socket, response.data() + size_of_vector, BUFFER_SIZE, 0)) > 0);
-
+		ssize_t bytes_count = recv(socket, buffer.data(), size, 0);
 
 		if (bytes_count < 0) {
 			perror("ERROR: recvfrom");
-			throw BaseException("The transminsion of data was not successfull", RECV_ERROR);
+			throw BaseException("The transminsion of buffer was not successfull", RECV_ERROR);
 		}
-		return response;
+		return bytes_count;
 	}
 
+
+	namespace server{
+		// TODO add functions needed by server
+	}
 
 }
 

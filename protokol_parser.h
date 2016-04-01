@@ -14,6 +14,7 @@
 #include <string>
 
 #include <string.h>
+#include "socket_handler.h"
 
 using namespace std;
 

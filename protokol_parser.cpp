@@ -43,4 +43,5 @@ message_id parse_response(vector<char> &response, string &return_val) {
 		remove_header_from_response(response);
 		return FILE_TRANSFER;
 	}
+	throw BaseException("Unknown protocol message",ERR_INTERNAL); // unknown respose
 }
