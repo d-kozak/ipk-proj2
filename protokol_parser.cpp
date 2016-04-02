@@ -191,6 +191,7 @@ namespace requests {
 
 	namespace server {
 		static string get_file_name(vector<char> &buffer) {
+			// TODO zjisti, proc blbne nazev pro prazdny soubor sources/empty.txt
 			static const char *name = "Name: ";
 			static const long __size = strlen(name);
 
