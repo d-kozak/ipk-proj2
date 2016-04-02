@@ -22,7 +22,7 @@ static sockets::SocketInfo parse_args(int argc, const char **argv, bool &upload,
 	} else if (strcmp("-p", argv[3]) != 0) {
 		throw std::invalid_argument("Third arg must be -p");
 	}
-	if (!(strcmp("-d", argv[5])  || !strcmp("-u", argv[5]) != 0)) {
+	if (!(strcmp("-d", argv[5]) == 0  || strcmp("-u", argv[5]) == 0)) {
 		throw std::invalid_argument("Fifth arg must be either -d or -u");
 	}
 	upload = strcmp("-u", argv[5]) == 0;

@@ -5,9 +5,15 @@
 #include "protokol_parser.h"
 
 namespace requests {
+	string create_success_msg() {
+		return string("SUCCESS\n");
+	}
 
 	string create_eror_msg(message_id id) {
-		return "ERROR " + id + '\n';
+		string s = "ERROR ";
+		s.append(to_string(id));
+		s.append("\n");
+		return s;
 	}
 
 	string create_get_file_msg(string file_name) {
@@ -25,22 +31,32 @@ namespace requests {
 		return msg;
 	}
 
-	string create_file_transfer_msg_including_file_content(string file_name) {
-		ifstream in_file(file_name, std::ios_base::binary);
-		if (!in_file) {
-			throw BaseException("File " + file_name + " was not opened successfully", ERR_FILE_NOT_OPENED);
+	static void strip_url_to_file_name(string &file_url) {
+		// check if string conctains '/'
+		size_t last_slash_index = file_url.find_last_of("/");
+		if (last_slash_index != string::npos) {
+			file_url.erase(file_url.begin(), file_url.begin() + last_slash_index + 1);
 		}
-		//string req = create_file_transfer_msg_including_file_content(file_name,);
+	}
+
+	string create_file_transfer_msg_including_file_content(string file_url) {
+		ifstream in_file(file_url, std::ios_base::binary);
+		if (!in_file) {
+			throw BaseException("File " + file_url + " was not opened successfully", ERR_FILE_NOT_OPENED);
+		}
+		//string req = create_file_transfer_msg_including_file_content(file_url,);
 
 		// load content of file into vector
 		std::istreambuf_iterator<char> start(in_file), end;
 		vector<char> buffer(start, end);
+		in_file.close();
 
-
-		string req = create_file_transfer_msg(file_name, buffer.size());
+		strip_url_to_file_name(file_url);
+		string req = create_file_transfer_msg(file_url, buffer.size());
 
 		// append the content of file
-		req.append(buffer.data());
+		if (buffer.size() > 0)
+			req.append(buffer.data());
 		return req;
 	}
 
@@ -57,7 +73,8 @@ namespace requests {
 		//response.erase(EOL - response.data() + response.begin(), response.end());
 
 		response->clear();
-		*response = vector<char>(ptr - response->data() + response->begin(),EOL - response->data() + response->begin());
+		*response = vector<char>(ptr - response->data() + response->begin(),
+								 EOL - response->data() + response->begin());
 	}
 
 	long remove_header_from_response(vector<char> &response, ssize_t &bytes_count) {
@@ -72,7 +89,7 @@ namespace requests {
 
 		char *endptr;
 		long size = strtol(ptr, &endptr, 10);
-		if (ptr != EOL) {
+		if (endptr != EOL) {
 			throw BaseException("Problem with response: parsing file size", INTERNAL_ERROR);
 		}
 
@@ -97,7 +114,7 @@ namespace requests {
 			return SUCCESS;
 		}
 		else if (first_chars.compare("ERROR") == 0) {
-			throw BaseException("ERRR Message received", stoi(first_chars.data() + 5, NULL, 10));
+			throw BaseException("ERRR Message received", stoi(response->data() + 5, NULL, 10));
 		} else if (first_chars.compare("GET F") == 0) {
 			strip_response_just_to_file_name(response);
 			return GET_FILE;
@@ -135,11 +152,6 @@ namespace requests {
 		}
 
 		void download_request(int socket, string file_name) {
-			ofstream out_file(file_name, std::ios_base::binary);
-			if (!out_file) {
-				throw BaseException("File " + file_name + " was not opened successfully", ERR_FILE_NOT_OPENED);
-			}
-
 			string req = create_get_file_msg(file_name);
 
 			sockets::send_message(socket, req);
@@ -147,22 +159,33 @@ namespace requests {
 			vector<char> response;
 			response.resize(sockets::BUFFER_SIZE);
 
-			ssize_t bytes_count = sockets::read_from_socket(socket, sockets::HEADER_SIZE, response);
+			ssize_t size_of_transfered_data = sockets::read_from_socket(socket, sockets::HEADER_SIZE, response);
 			if (parse_response(&response) != FILE_TRANSFER) {
 				throw BaseException("The response was invalid", ERR_WRONG_MSG_RECEIVED);
 			}
 
-			long file_size = remove_header_from_response(response, bytes_count);
-			while (bytes_count <= file_size) {
+			ofstream out_file(file_name, std::ios_base::binary);
+			if (!out_file) {
+				throw BaseException("File " + file_name + " was not opened successfully", ERR_FILE_NOT_OPENED);
+			}
+
+			long file_size = remove_header_from_response(response, size_of_transfered_data);
+			ssize_t one_transfer = size_of_transfered_data;
+			while (size_of_transfered_data <= file_size) {
+				response.resize(one_transfer);
 				std::copy(response.begin(), response.end(), std::ostream_iterator<char>(out_file));
 				response.clear();
 
 				// when this was the last iteration, we do not want to read again
-				if (bytes_count < file_size)
-					bytes_count += sockets::read_from_socket(socket, sockets::BUFFER_SIZE, response);
+				if (size_of_transfered_data < file_size) {
+					response.resize(sockets::BUFFER_SIZE);
+					one_transfer = sockets::read_from_socket(socket, sockets::BUFFER_SIZE, response);
+					size_of_transfered_data += one_transfer;
+				}
+				else
+					break;
 			}
-
-
+			out_file.close();
 		}
 	}
 
@@ -185,15 +208,15 @@ namespace requests {
 			return string(file_name.data());
 		}
 
-		void send_file(int socket, string file_name) {
-			string message = create_file_transfer_msg_including_file_content(file_name);
+		void send_file(int socket, string file_url) {
+			string message = create_file_transfer_msg_including_file_content(file_url);
 			sockets::send_message(socket, message);
 		}
 
-		void store_file(int socket, vector<char> &buffer, ssize_t bytes_count) {
+		void store_file(int socket, vector<char> &buffer, ssize_t sum_of_transfered_data) {
 			string file_name = get_file_name(buffer);
 
-			long size = remove_header_from_response(buffer, bytes_count);
+			long size = remove_header_from_response(buffer, sum_of_transfered_data);
 
 			ofstream out_file(file_name);
 			if (!out_file) {
@@ -203,13 +226,24 @@ namespace requests {
 				throw BaseException(exc_msg, ERR_FILE_NOT_FOUND);
 			}
 
-			while (bytes_count <= size) {
+			ssize_t one_transfer = sum_of_transfered_data;
+			while (sum_of_transfered_data <= size) {
+				buffer.resize(one_transfer); // resize the buffer so that it does not contain the zeros at the end
 				std::copy(buffer.begin(), buffer.end(), std::ostream_iterator<char>(out_file));
 				buffer.clear();
 				// when this was the last iteration, we do not want to read again
-				if (bytes_count < size)
-					bytes_count += sockets::read_from_socket(socket, sockets::BUFFER_SIZE,buffer);
+				if (sum_of_transfered_data < size) {
+					buffer.resize(sockets::BUFFER_SIZE);
+					one_transfer = sockets::read_from_socket(socket, sockets::BUFFER_SIZE, buffer);
+					sum_of_transfered_data += one_transfer;
+				}
+				else
+					break;
 			}
+			out_file.close();
+
+			string msg = requests::create_success_msg();
+			sockets::send_message(socket, msg);
 		}
 	}
 }

@@ -40,9 +40,8 @@ static void handle_connection(int comm_socket) {
 	} catch (BaseException &e) {
 		cerr << "It appears there was a problem with this request..." << endl;
 		cerr << e.what();
-		string msg = "ERROR ";
-		msg.append(to_string(e.getRetVal()));
-		msg.append("\n");
+		string msg = requests::create_eror_msg(static_cast<requests::message_id>(e.getRetVal()));
+		cerr << msg;
 		sockets::send_message(comm_socket,msg);
 	}
 }
