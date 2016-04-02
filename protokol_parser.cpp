@@ -39,7 +39,7 @@ namespace requests {
 		}
 	}
 
-	string create_file_transfer_msg_including_file_content(string file_url) {
+	vector<char> create_file_transfer_msg_including_file_content(string file_url) {
 		ifstream in_file(file_url, std::ios_base::binary);
 		if (!in_file) {
 			throw BaseException("File " + file_url + " was not opened successfully", ERR_FILE_NOT_OPENED);
@@ -54,10 +54,10 @@ namespace requests {
 		strip_url_to_file_name(file_url);
 		string req = create_file_transfer_msg(file_url, buffer.size());
 
-		// append the content of file
-		if (buffer.size() > 0)
-			req.append(buffer.data());
-		return req;
+
+		vector<char> res(req.begin(),req.end());
+		res.insert(res.end(),buffer.begin(),buffer.end());
+		return res;
 	}
 
 	static void strip_response_just_to_file_name(vector<char> *response) {
@@ -132,7 +132,7 @@ namespace requests {
 	namespace client {
 		void upload_requests(int socket, string file_name) {
 
-			string req = create_file_transfer_msg_including_file_content(file_name);
+			vector<char>req = create_file_transfer_msg_including_file_content(file_name);
 
 			// TODO send chunks instead of one huge request
 			sockets::send_message(socket, req);
@@ -209,7 +209,7 @@ namespace requests {
 		}
 
 		void send_file(int socket, string file_url) {
-			string message = create_file_transfer_msg_including_file_content(file_url);
+			vector<char> message = create_file_transfer_msg_including_file_content(file_url);
 			sockets::send_message(socket, message);
 		}
 

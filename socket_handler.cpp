@@ -44,6 +44,17 @@ namespace sockets {
 		}
 	}
 
+	void send_message(int socket, vector<char> message) {
+
+		ssize_t bytes_count = 0;
+		//std::cout << "size: " << msg.size() << "strlen: " << strlen((msg.c_str())) << "\n";
+		bytes_count = send(socket, message.data(), message.size(), 0);
+		if (bytes_count < 0) {
+			perror("ERROR: sendto");
+			throw BaseException("Request was not send successfully\n", SEND_ERROR);
+		}
+	}
+
 	void close_socket(int fd) {
 		if (close(fd) != 0) {
 			perror("ERROR: close");

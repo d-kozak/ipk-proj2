@@ -33,7 +33,7 @@ namespace requests {
 	string create_eror_msg(message_id id);
 	string create_get_file_msg(string file_name);
 	string create_file_transfer_msg(string file_name, size_t file_size);
-	string create_file_transfer_msg_including_file_content(string file_url);
+	vector<char> create_file_transfer_msg_including_file_content(string file_url);
 
 	message_id parse_response(vector<char> *response);
 

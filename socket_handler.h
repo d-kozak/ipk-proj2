@@ -85,6 +85,7 @@ namespace sockets {
 	 * @param (string) message
 	 */
 	void send_message(int socket, string message);
+	void send_message(int socket, vector<char> message);
 
 	/**
 	 * @param (int) socket descriptor
