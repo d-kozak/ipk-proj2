@@ -29,6 +29,7 @@ enum ret_val {
 	SEND_ERROR,
 	RECV_ERROR,
 	CLOSE_ERROR,
+	FORK_ERROR,
 	INTERNAL_ERROR
 };
 

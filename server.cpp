@@ -7,9 +7,16 @@
  *
  */
 
+#include <sys/wait.h>
 #include "server.h"
 
 extern const bool DEBUG;
+
+void SigCatcher(int n)
+{
+	int pid = wait3(NULL,WNOHANG,NULL);
+	printf("Child %d spawned.\n",pid);
+}
 
 static int parse_args(int argc, const char **argv) {
 	if (argc != 3) {
@@ -46,6 +53,23 @@ static void handle_connection(int comm_socket) {
 	}
 }
 
+static void lets_do_the_fornam_style(int comm_socket,int welcome_socket){
+	int pid = fork();
+	if(pid < 0){
+		perror("fork failed");
+		throw BaseException("Forking failed",FORK_ERROR);
+	}
+	if(pid == 0){
+		// child process
+		close(welcome_socket);
+		handle_connection(comm_socket);
+		exit(0); // kill the process
+	} else {
+		close(comm_socket);
+	}
+
+}
+
 void log_connection(sockaddr_in6 *sa_client, char (&str)[INET6_ADDRSTRLEN]) {
 	if (inet_ntop(AF_INET6, &(sa_client->sin6_addr), str, sizeof(str))) {
 		if (DEBUG) {
@@ -69,12 +93,14 @@ int main(int argc, const char *argv[]) {
 
 		int welcome_socket = sockets::server::prepare_socket_and_int_vars(port_number, sa, rc);
 
+		signal(SIGCHLD,SigCatcher);
+
 		// disable the endless loop warning
 		while (1) {
 			int comm_socket = accept(welcome_socket, (struct sockaddr *) &sa_client, &sa_client_len);
 			if (comm_socket > 0) {
 				log_connection(&sa_client, str);
-				handle_connection(comm_socket);
+				lets_do_the_fornam_style(comm_socket,welcome_socket);
 			}
 			else {
 				//throw BaseException("Connection was not created successfully",ERR_INTERNAL);
