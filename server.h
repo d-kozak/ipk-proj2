@@ -15,7 +15,16 @@
 #include <unistd.h>
 #include <stdexcept>
 
-#include "iostream"
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <errno.h>
+
+#include <iostream>
 
 #include "socket_handler.h"
 #include "protokol_parser.h"

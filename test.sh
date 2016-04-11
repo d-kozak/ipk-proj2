@@ -1,11 +1,9 @@
-#!/bin/bash
 
 error() {
 	echo "Error: $1" >&2
 	exit 1
 }
 
-export -f error
 export FILES_DIR='testfiles'
 export DIR='testdir'
 export CLIENT_NAME='client'

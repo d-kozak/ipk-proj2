@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <iterator>
 #include <netinet/in.h>
+#include <vector>
 
 const bool DEBUG = true;
 

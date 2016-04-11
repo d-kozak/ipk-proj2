@@ -1,14 +1,6 @@
-#!/bin/bash
-
-export -f error
-export FILES_DIR='testfiles'
-export DIR='testdir'
-export CLIENT_NAME='client'
-export SERVER_NAME='server'
-
 make clean
 
-make || error "Build was not successfull" # build the binaries
+make || exit 55 # build the binaries
 
 if [[ -d  ${DIR} ]]; then
 		rm -rf ${DIR}
