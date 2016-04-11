@@ -19,7 +19,7 @@ CLIENT_FILES=client.o protokol_parser.o socket_handler.o
 #seznamy vsech .cpp,.h a .o souboru
 OBJ=server.o client.o protokol_parser.o socket_handler.o
 HEAD=server.h client.h protokol_parser.h socket_handler.h
-SRC=server.cpp client.cpp protokol_parser.cpp socket_handler.cc
+SRC=server.cpp client.cpp protokol_parser.cpp socket_handler.cpp
 
 #soubory pro testovani
 TEST_FILES=test.sh create_test_dirs.sh testfiles/*
@@ -44,4 +44,4 @@ distrib:
 
 clean:
 	rm -f *.o ${CLIENT_NAME} ${SERVER_NAME}
-	rm -f xkozak15.zip
+	rm -f xkozak15.tar.gz
