@@ -1,0 +1,34 @@
+IPK projekt 2 : Program pro prenos souboru 
+Autor: David Kozák, xkozak15
+Kontakt: xkozak15@stud.fit.vutbr.cz
+
+Program prelozte prikazem make, uklid prikaz make clean
+
+./protokol.pdf - popis komunikacniho protokolu
+
+./protokol_parser - modul vytvareni/parsovani jednotlivych zprav
+./socket_handler - modul pro prace se sockety,prijimani,zasilani zprav
+
+./server - modul implementujici server
+./client - modul implementujiciho klienta
+
+./test.sh - davkovy soubor demonstrujici cinnost serveru
+./create_test_dirs.sh - pomocny skript, ktery pripravy adresarovou strukturu pro testovani
+	tato struktura vypada nasledovne;
+		./testdir - korenovy adresar
+		./testdir/server - spustitelny soubor serveru
+		./testdir/client{1-9} - adresar jednoho klienta
+		./testdir/testfiles -adresar se soubory, ktere se budou prenaset
+
+./testfiles/* -soubory vyuzite pri demonstrovani funkcnosti projektu
+./Makefile - soubor pro preklad a pod...
+
+usage:
+./client -h hostname -p port [-d|-u] file_name
+	hostname - jmeno/ip adresa serveru
+	port - cislo portu
+	-d download, -u upload
+	file_name - jmeno preneseno souboru
+
+./server -p port
+	port - cislo portu, na kterem ma server ocekavat prichozi pozadavky
