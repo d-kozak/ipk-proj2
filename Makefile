@@ -21,6 +21,9 @@ OBJ=server.o client.o protokol_parser.o socket_handler.o
 HEAD=server.h client.h protokol_parser.h socket_handler.h
 SRC=server.cpp client.cpp protokol_parser.cpp socket_handler.cc
 
+#soubory pro testovani
+TEST_FILES=test.sh create_test_dirs.sh testfiles/*
+
 .PHONY: build
 .PHONY: clean
 .PHONY: distrib
@@ -37,7 +40,7 @@ ${CLIENT_NAME}: ${CLIENT_FILES}
 ${OBJ}: ${HEAD}
 
 distrib:
-	tar -cvzf xkozak15.tar.gz ${HEAD} ${SRC} Makefile
+	tar -cvzf xkozak15.tar.gz ${HEAD} ${SRC} ${TEST_FILES} Makefile 
 
 clean:
 	rm -f *.o ${CLIENT_NAME} ${SERVER_NAME}
