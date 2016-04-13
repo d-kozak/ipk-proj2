@@ -8,28 +8,35 @@ namespace sockets {
 
 	int prepare_socket(const SocketInfo &socket_info) {
 		int client_socket;
-		if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) <= 0) {
-			perror("ERROR: socket");
-			throw BaseException("Socket was not created succesfully", SOCKET_ERROR);
+
+		addrinfo hint;
+		addrinfo *server_info;
+
+		memset(&hint, '\0', sizeof(addrinfo));
+		hint.ai_family = AF_UNSPEC;
+		hint.ai_socktype = SOCK_STREAM;
+		hint.ai_protocol = IPPROTO_TCP;
+
+		int ret = getaddrinfo(socket_info.getHostname().c_str(), to_string(socket_info.getPort()).c_str(), &hint,
+							  &server_info);
+		if (ret != 0) {
+			throw BaseException("Invalid hostname", GET_HOST_BY_NAME_ERROR);
 		}
 
-		hostent *server = gethostbyname(socket_info.getHostname().c_str());
-		if (server == NULL) {
-			fprintf(stderr, "ERROR, no such host  as %s.\n", socket_info.getHostname().c_str());
-			throw BaseException("DNS translation was not succesfull", GET_HOST_BY_NAME_ERROR);
+		addrinfo *tmp;
+		for (tmp = server_info; tmp != NULL;
+			 tmp = tmp->ai_next) {
+			if((client_socket = socket(tmp->ai_family,tmp->ai_socktype,tmp->ai_protocol)) == -1){
+				continue;
+			}
+			if(connect(client_socket,tmp->ai_addr,tmp->ai_addrlen) == -1)
+				continue;
+			break;
 		}
 
-		struct sockaddr_in server_address;
-		bzero((char *) &server_address, sizeof(server_address));
-		server_address.sin_family = AF_INET;
-		bcopy((char *) server->h_addr, (char *) &server_address.sin_addr.s_addr, (size_t) server->h_length);
+		if(tmp == NULL)
+			throw  BaseException("Connection was not established successfully",CONNECT_ERROR);
 
-		server_address.sin_port = htons((uint16_t) socket_info.getPort());
-
-		if (connect(client_socket, (const struct sockaddr *) &server_address, sizeof(server_address)) != 0) {
-			perror("ERROR: connect");
-			throw BaseException("Connection was not started successfully\n", CONNECT_ERROR);
-		}
 		return client_socket;
 	}
 
@@ -69,7 +76,7 @@ namespace sockets {
 	 * @param (vector<char> &) buffer
 	 * @return (ssize_t) number of bytes loaded
 	 */
-	ssize_t read_from_socket(int socket, unsigned long size,vector<char>& buffer) {
+	ssize_t read_from_socket(int socket, unsigned long size, vector<char> &buffer) {
 		buffer.resize(size);
 
 		ssize_t bytes_count = recv(socket, buffer.data(), size, 0);
@@ -81,7 +88,7 @@ namespace sockets {
 		return bytes_count;
 	}
 
-	namespace server{
+	namespace server {
 		int prepare_socket_and_int_vars(int port_number, sockaddr_in6 &sa, int &rc) {
 			int welcome_socket;
 			if ((welcome_socket = socket(PF_INET6, SOCK_STREAM, 0)) < 0) {
