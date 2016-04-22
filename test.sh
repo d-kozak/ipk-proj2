@@ -94,7 +94,46 @@ for client in $(find . -type f ! -name "*.*"); do
 	done
 
 done
+rm *.png *.jpg *.txt
 echo "------------END STRESS TEST------------"
 echo ""
+
+echo "-------------SYNCHRONIZATION TEST------"
+
+#try all clients at once to upload the same file
+for client in $(find . -type f ! -name "*.*"); do
+	if [[ ${client} == './server' ]]; then
+		continue
+	fi
+	#to send all the files
+	for file in $(ls $FILES_DIR); do
+		client_name=${client##*/}
+		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${file} || error "Cannot start client - uploading ${file} was not successful" 
+	done
+
+done
+
+for FILE in $(ls $FILES_DIR); do
+
+	echo "	Checking file: $FILE"
+	echo "		diff between original and transported file:"
+	echo "		------------"
+	diff ./${FILE} ../${FILES_DIR}/${FILE}
+	if [ "$?" -ne 0 ]; then
+		error "File ${FILE} was changed" 1
+	fi
+	echo "		------------"
+done
+
+echo "---------END SYNCHRONIZATION TEST------"
+
+echo "--------FINAL TESTS-------"
+	echo "Try to download file that does not exist..."
+	./client1/client1 -h localhost -p ${PORT_NUM} -d neexistuje_a_co_kdyz_tu_je_NEEXISTUJE  
+	if [ "$?" -eq 0 ]; then
+		error "this file does not existst on server, its dowload cannot be successful" 1
+	fi
+
+echo "--------END FINAL TESTS-------"
 
 kill -s SIGINT $(pidof ${SERVER_NAME})

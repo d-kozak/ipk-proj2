@@ -26,7 +26,7 @@ void SigIntCatch(int n){
 	std::cerr << "Received sigint, I will set the flag" << std::endl;
 	flag = 1;
 	requests::server::release_locks();
-	
+	exit(1);
 }
 
 static int parse_args(int argc, const char **argv) {
