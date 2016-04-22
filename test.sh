@@ -134,6 +134,13 @@ echo "--------FINAL TESTS-------"
 
 echo "--------END FINAL TESTS-------"
 
-kill -s SIGINT $(pidof ${SERVER_NAME})
+2>/dev/null 1>/dev/null kill -s SIGINT $(pgrep ${SERVER_NAME})
+if [ "$?" -ne 0 ] ; then
+	pid=$(ps -aux | grep 'xkozak15' | grep './server' | awk '{print $2}' | head -n 1)
+	2>/dev/null 1>/dev/null kill -s INT ${pid}
+	if [ "$?" -ne 0 ] ; then
+		error "PID of server was not found, I cant kill it :/" 0
+	fi
+fi
 
 echo "Testing was successful"

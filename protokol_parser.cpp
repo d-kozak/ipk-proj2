@@ -61,9 +61,9 @@ namespace requests {
 		return res;
 	}
 
-	static void strip_response_just_to_file_name(vector<char> *response) {
+	static void strip_response_just_to_file_name(vector<char>& response) {
 		static const char *str = "Name: ";
-		char *ptr = strstr(response->data(), str);
+		char *ptr = strstr(response.data(), str);
 		if (ptr == NULL) {
 			throw BaseException("Problem with response: parsing file name", INTERNAL_ERROR);
 		}
@@ -73,9 +73,12 @@ namespace requests {
 		//response.erase(response.begin(), ptr - response.data() + response.begin());
 		//response.erase(EOL - response.data() + response.begin(), response.end());
 
-		response->clear();
-		*response = vector<char>(ptr - response->data() + response->begin(),
-								 EOL - response->data() + response->begin());
+		response.clear();
+		vector<char> tmp(ptr - response.data() + response.begin(), EOL - response.data() + response.begin());
+		response.assign(tmp.begin(), tmp.end());
+		response[tmp.size()] = '\0';
+		//cout << response.data() << endl;
+		//exit(1);
 	}
 
 	long remove_header_from_response(vector<char> &response, ssize_t &bytes_count) {
@@ -107,13 +110,13 @@ namespace requests {
 		return size;
 	}
 
-	message_id parse_response(vector<char> *response) {
-		string first_chars(response->begin(), response->begin() + 5);
+	message_id parse_response(vector<char> &response) {
+		string first_chars(response.begin(), response.begin() + 5);
 		if (first_chars.compare("SUCCE") == 0) {
 			return SUCCESS;
 		}
 		else if (first_chars.compare("ERROR") == 0) {
-			throw BaseException("ERRR Message received", stoi(response->data() + 5, NULL, 10));
+			throw BaseException("ERRR Message received", stoi(response.data() + 5, NULL, 10));
 		} else if (first_chars.compare("GET F") == 0) {
 			strip_response_just_to_file_name(response);
 			return GET_FILE;
@@ -141,7 +144,7 @@ namespace requests {
 			buffer.resize(sockets::HEADER_SIZE);
 			sockets::read_from_socket(socket, sockets::HEADER_SIZE, buffer);
 
-			message_id result = parse_response(&buffer);
+			message_id result = parse_response(buffer);
 			if (result != SUCCESS) {
 				string err_msg = "ERROR ";
 				err_msg.append(to_string(result));
@@ -159,7 +162,7 @@ namespace requests {
 			response.resize(sockets::BUFFER_SIZE);
 
 			ssize_t size_of_transfered_data = sockets::read_from_socket(socket, sockets::HEADER_SIZE, response);
-			if (parse_response(&response) != FILE_TRANSFER) {
+			if (parse_response(response) != FILE_TRANSFER) {
 				throw BaseException("The response was invalid", ERR_WRONG_MSG_RECEIVED);
 			}
 
