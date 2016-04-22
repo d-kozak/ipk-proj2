@@ -30,6 +30,11 @@ static sockets::SocketInfo parse_args(int argc, const char **argv, bool &upload,
 	file_name.clear();
 	file_name.append(argv[6]);
 
+	// todo over, zda to zda opravdu ma byt
+	if(!upload && file_name.find("/") != string::npos){
+		throw invalid_argument("When downloading, you cannot specify directory, the file will always be saved into the client directory");
+	}
+
 	return sockets::SocketInfo(argv[2], stoi(argv[4]));
 }
 
