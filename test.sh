@@ -97,4 +97,4 @@ done
 echo "------------END STRESS TEST------------"
 echo ""
 
-kill $(pidof ${SERVER_NAME})
+kill -s SIGINT $(pidof ${SERVER_NAME})

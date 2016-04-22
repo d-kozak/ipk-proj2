@@ -14,10 +14,19 @@
 
 extern const bool DEBUG;
 
+volatile sig_atomic_t flag = 0;
+
 void SigCatcher(int n) {
 	int pid = wait3(NULL, WNOHANG, NULL);
 	if (DEBUG)
 		printf("Child %d spawned.\n", pid);
+}
+
+void SigIntCatch(int n){
+	std::cerr << "Received sigint, I will set the flag" << std::endl;
+	flag = 1;
+	requests::server::release_locks();
+	
 }
 
 static int parse_args(int argc, const char **argv) {
@@ -96,9 +105,15 @@ int main(int argc, const char *argv[]) {
 		int welcome_socket = sockets::server::prepare_socket_and_int_vars(port_number, sa, rc);
 
 		signal(SIGCHLD, SigCatcher);
+		signal(SIGINT, SigIntCatch);
 
 		// disable the endless loop warning
 		while (1) {
+			if(flag){
+				std::cerr << "Termination flag is on, I will release locks and  shut myself down" << std::endl;
+				break;
+			}
+
 			int comm_socket = accept(welcome_socket, (struct sockaddr *) &sa_client, &sa_client_len);
 			if (comm_socket > 0) {
 				log_connection(&sa_client, str);
@@ -124,4 +139,7 @@ int main(int argc, const char *argv[]) {
 		requests::server::release_locks();
 		return WRONG_ARGUMENTS;
 	}
+
+	requests::server::release_locks();
+	return 0;
 }

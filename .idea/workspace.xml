@@ -16,9 +16,7 @@
     <list default="true" id="3ce12100-87bd-4761-b239-9d6a07c11a34" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protokol_parser.cpp" afterPath="$PROJECT_DIR$/protokol_parser.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/protokol_parser.h" afterPath="$PROJECT_DIR$/protokol_parser.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/server.cpp" afterPath="$PROJECT_DIR$/server.cpp" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/socket_handler.h" afterPath="$PROJECT_DIR$/socket_handler.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test.sh" afterPath="$PROJECT_DIR$/test.sh" />
     </list>
     <ignored path="ipk-proj2.iws" />
@@ -53,8 +51,8 @@
       <file leaf-file-name="server.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="379">
-              <caret line="112" column="57" selection-start-line="112" selection-start-column="57" selection-end-line="112" selection-end-column="57" />
+            <state relative-caret-position="394">
+              <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="4" />
               <folding>
                 <element signature="e#116#137#0" expanded="true" />
               </folding>
@@ -65,8 +63,8 @@
       <file leaf-file-name="protokol_parser.cpp" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/protokol_parser.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="541">
-              <caret line="197" column="34" selection-start-line="197" selection-start-column="34" selection-end-line="197" selection-end-column="34" />
+            <state relative-caret-position="271">
+              <caret line="200" column="31" selection-start-line="200" selection-start-column="31" selection-end-line="200" selection-end-column="31" />
               <folding>
                 <element signature="e#39#55#0" expanded="true" />
               </folding>
@@ -140,16 +138,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/server.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="21" column="19" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="Git.Settings">
@@ -170,8 +158,8 @@
         <option value="$PROJECT_DIR$/client.cpp" />
         <option value="$PROJECT_DIR$/socket_handler.cpp" />
         <option value="$PROJECT_DIR$/protokol_parser.h" />
-        <option value="$PROJECT_DIR$/protokol_parser.cpp" />
         <option value="$PROJECT_DIR$/socket_handler.h" />
+        <option value="$PROJECT_DIR$/protokol_parser.cpp" />
         <option value="$PROJECT_DIR$/server.cpp" />
       </list>
     </option>
@@ -504,7 +492,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/protokol_parser.cpp</url>
-          <line>248</line>
+          <line>250</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -524,7 +512,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/protokol_parser.cpp</url>
-          <line>203</line>
+          <line>205</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
@@ -811,13 +799,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/include/signal.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="101" column="0" selection-start-line="101" selection-start-column="0" selection-end-line="101" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="http://www.seznam.cz">
       <provider selected="true" editor-type-id="httpFileEditor">
         <state />
@@ -862,13 +843,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="890" column="0" selection-start-line="890" selection-start-column="0" selection-end-line="890" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="16" column="46" selection-start-line="16" selection-start-column="46" selection-end-line="16" selection-end-column="46" />
         </state>
       </provider>
     </entry>
@@ -949,16 +923,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/protokol_parser.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="541">
-          <caret line="197" column="34" selection-start-line="197" selection-start-column="34" selection-end-line="197" selection-end-column="34" />
-          <folding>
-            <element signature="e#39#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/socket_handler.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-360">
@@ -967,10 +931,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="30" column="9" selection-start-line="30" selection-start-column="9" selection-end-line="30" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/include/signal.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="84" column="15" selection-start-line="84" selection-start-column="15" selection-end-line="84" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protokol_parser.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="271">
+          <caret line="200" column="31" selection-start-line="200" selection-start-column="31" selection-end-line="200" selection-end-column="31" />
+          <folding>
+            <element signature="e#39#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/server.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="112" column="57" selection-start-line="112" selection-start-column="57" selection-end-line="112" selection-end-column="57" />
+        <state relative-caret-position="394">
+          <caret line="28" column="4" selection-start-line="28" selection-start-column="4" selection-end-line="28" selection-end-column="4" />
           <folding>
             <element signature="e#116#137#0" expanded="true" />
           </folding>

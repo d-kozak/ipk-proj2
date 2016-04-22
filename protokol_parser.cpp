@@ -194,9 +194,11 @@ namespace requests {
 		std::map<std::string, std::mutex *> file_locks;
 
 		void release_locks(){
+			main_lock.lock();
 			for (const auto& any : file_locks) {
 				delete any.second;
 			}
+			main_lock.unlock();
 		}
 
 		static string get_file_name(vector<char> &buffer) {
