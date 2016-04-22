@@ -9,9 +9,11 @@ export FILES_DIR='testfiles'
 export DIR='testdir'
 export CLIENT_NAME='client'
 export SERVER_NAME='server'
-export PORT_NUM=12345
+export PORT_NUM=$(shuf -i 10000-20000 -n 1)
 
 ./create_test_dirs.sh || exit 1
+
+echo "Randomly generated server port number is ${PORT_NUM}"
 
 cd ${DIR}
 ./${SERVER_NAME} -p ${PORT_NUM} &
@@ -22,7 +24,7 @@ fi
 
 echo "------------BASIC TEST------------"
 echo ""
-echo "Test of upload proccess"
+echo "---->Test of upload proccess<---"
 
 for FILE in $(ls ${FILES_DIR})
 do
@@ -30,17 +32,17 @@ do
 	#now try upload a download 
 	./client1/client1 -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${FILE}
 
-	echo "diff between original and transported file:"
-	echo "------------"
+	echo "		diff between original and transported file:"
+	echo "		------------"
 	diff ${FILE} ${FILES_DIR}/${FILE}
 	if [ "$?" -ne 0 ]; then
 		error "File ${FILE} was changed" 1
 	fi
 
-	echo "------------"
+	echo "		------------"
 done
 
-echo "Test of dowload proccess"
+echo "--->Test of dowload proccess<----"
 cd client1 # go into client1 directory
 for FILE in $(ls ../${FILES_DIR})
 do
@@ -48,14 +50,14 @@ do
 	#now try upload a download 
 	./client1 -h localhost -p ${PORT_NUM} -d ${FILE}
 
-	echo "diff between original and transported file:"
-	echo "------------"
+	echo "		diff between original and transported file:"
+	echo "		------------"
 	diff ./${FILE} ../${FILES_DIR}/${FILE}
 	if [ "$?" -ne 0 ]; then
 		error "File ${FILE} was changed" 1
 	fi
 
-	echo "------------"
+	echo "		------------"
 done
 cd ..
 
@@ -83,7 +85,6 @@ for client in $(find . -type f ! -name "*.*"); do
 	if [[ ${client} == './server' ]]; then
 		continue
 	fi
-	echo ${client}
 	#to send all the files
 	for file in $(ls $FILES_DIR); do
 		client_name=${client##*/}

@@ -2,6 +2,8 @@
 // Created by david on 30.3.16.
 //
 
+#include <mutex>
+#include <map>
 #include "protokol_parser.h"
 
 namespace requests {
@@ -31,7 +33,7 @@ namespace requests {
 		return msg;
 	}
 
-	static void strip_url_to_file_name(string &file_url) {
+	void strip_url_to_file_name(string &file_url) {
 		// check if string conctains '/'
 		size_t last_slash_index = file_url.find_last_of("/");
 		if (last_slash_index != string::npos) {
@@ -55,8 +57,8 @@ namespace requests {
 		string req = create_file_transfer_msg(file_url, buffer.size());
 
 
-		vector<char> res(req.begin(),req.end());
-		res.insert(res.end(),buffer.begin(),buffer.end());
+		vector<char> res(req.begin(), req.end());
+		res.insert(res.end(), buffer.begin(), buffer.end());
 		return res;
 	}
 
@@ -107,8 +109,6 @@ namespace requests {
 	}
 
 	message_id parse_response(vector<char> *response) {
-		//vector<char> first_chars(response.begin(), response.begin() + 5);
-
 		string first_chars(response->begin(), response->begin() + 5);
 		if (first_chars.compare("SUCCE") == 0) {
 			return SUCCESS;
@@ -132,7 +132,7 @@ namespace requests {
 	namespace client {
 		void upload_requests(int socket, string file_name) {
 
-			vector<char>req = create_file_transfer_msg_including_file_content(file_name);
+			vector<char> req = create_file_transfer_msg_including_file_content(file_name);
 
 			// TODO send chunks instead of one huge request
 			sockets::send_message(socket, req);
@@ -190,6 +190,15 @@ namespace requests {
 	}
 
 	namespace server {
+		std::mutex main_lock;
+		std::map<std::string, std::mutex *> file_locks;
+
+		void release_locks(){
+			for (const auto& any : file_locks) {
+				delete any.second;
+			}
+		}
+
 		static string get_file_name(vector<char> &buffer) {
 			// TODO zjisti, proc blbne nazev pro prazdny soubor sources/empty.txt
 			static const char *name = "Name: ";
@@ -209,42 +218,75 @@ namespace requests {
 			return string(file_name.data());
 		}
 
+		std::mutex* get_lock_for_file(std::string file_name){
+			//now lock the main mutex and get lock for current file
+			main_lock.lock();
+			if (file_locks.find(file_name) == file_locks.end()) {
+				// if lock for this file has not been created yet, we have to do it now
+				file_locks[file_name] = new std::mutex();
+			}
+			// now we get lock for current file
+			std::mutex *lock = file_locks[file_name];
+			main_lock.unlock(); // we do not have use the main lock anymore
+			return lock;
+		}
+
+
 		void send_file(int socket, string file_url) {
-			vector<char> message = create_file_transfer_msg_including_file_content(file_url);
-			sockets::send_message(socket, message);
+			strip_url_to_file_name(file_url);
+			std::mutex* lock = get_lock_for_file(file_url);
+			lock->lock();
+			try {
+				vector<char> message = create_file_transfer_msg_including_file_content(file_url);
+				sockets::send_message(socket, message);
+			} catch (BaseException & e){
+				lock->unlock();
+				throw BaseException(e.what(),e.getRetVal());
+			}
 		}
 
 		void store_file(int socket, vector<char> &buffer, ssize_t sum_of_transfered_data) {
 			string file_name = get_file_name(buffer);
 
-			long size = remove_header_from_response(buffer, sum_of_transfered_data);
+			std::mutex* lock = get_lock_for_file(file_name);
 
-			ofstream out_file(file_name);
-			if (!out_file) {
-				string exc_msg = "File ";
-				exc_msg.append(file_name);
-				exc_msg.append("was not opened successfully");
-				throw BaseException(exc_msg, ERR_FILE_NOT_FOUND);
-			}
+			//now lock the lock for current file
+			lock->lock();
+			try {
 
-			ssize_t one_transfer = sum_of_transfered_data;
-			while (sum_of_transfered_data <= size) {
-				buffer.resize(one_transfer); // resize the buffer so that it does not contain the zeros at the end
-				std::copy(buffer.begin(), buffer.end(), std::ostream_iterator<char>(out_file));
-				buffer.clear();
-				// when this was the last iteration, we do not want to read again
-				if (sum_of_transfered_data < size) {
-					buffer.resize(sockets::BUFFER_SIZE);
-					one_transfer = sockets::read_from_socket(socket, sockets::BUFFER_SIZE, buffer);
-					sum_of_transfered_data += one_transfer;
+				long size = remove_header_from_response(buffer, sum_of_transfered_data);
+
+				ofstream out_file(file_name);
+				if (!out_file) {
+					string exc_msg = "File ";
+					exc_msg.append(file_name);
+					exc_msg.append("was not opened successfully");
+					throw BaseException(exc_msg, ERR_FILE_NOT_FOUND);
 				}
-				else
-					break;
-			}
-			out_file.close();
 
-			string msg = requests::create_success_msg();
-			sockets::send_message(socket, msg);
+				ssize_t one_transfer = sum_of_transfered_data;
+				while (sum_of_transfered_data <= size) {
+					buffer.resize(one_transfer); // resize the buffer so that it does not contain the zeros at the end
+					std::copy(buffer.begin(), buffer.end(), std::ostream_iterator<char>(out_file));
+					buffer.clear();
+					// when this was the last iteration, we do not want to read again
+					if (sum_of_transfered_data < size) {
+						buffer.resize(sockets::BUFFER_SIZE);
+						one_transfer = sockets::read_from_socket(socket, sockets::BUFFER_SIZE, buffer);
+						sum_of_transfered_data += one_transfer;
+					}
+					else
+						break;
+				}
+				out_file.close();
+
+				string msg = requests::create_success_msg();
+				sockets::send_message(socket, msg);
+			} catch (BaseException & e){
+				// if anything went wrong, just unlock to lock and let the exception continue
+				lock->unlock();
+				throw BaseException(e.what(),e.getRetVal());
+			}
 		}
 	}
 }

@@ -17,7 +17,7 @@
 #include <netinet/in.h>
 #include <vector>
 
-const bool DEBUG = true;
+const bool DEBUG = false;
 
 using namespace std;
 

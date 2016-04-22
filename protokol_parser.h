@@ -38,6 +38,7 @@ namespace requests {
 	message_id parse_response(vector<char> *response);
 
 	long remove_header_from_response(vector<char> &response, ssize_t &bytes_count);
+	void strip_url_to_file_name(string &file_url);
 
 	namespace client {
 		void upload_requests(int socket, string file_name);
@@ -47,6 +48,8 @@ namespace requests {
 	namespace server{
 		void send_file(int socket,string file_url);
 		void store_file(int socket,vector<char>& buffer,ssize_t sum_of_transfered_data);
+
+		void release_locks();
 	}
 }
 

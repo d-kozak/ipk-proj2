@@ -8,14 +8,16 @@
  */
 
 #include <sys/wait.h>
+#include <map>
+#include <mutex>
 #include "server.h"
 
 extern const bool DEBUG;
 
-void SigCatcher(int n)
-{
-	int pid = wait3(NULL,WNOHANG,NULL);
-	printf("Child %d spawned.\n",pid);
+void SigCatcher(int n) {
+	int pid = wait3(NULL, WNOHANG, NULL);
+	if (DEBUG)
+		printf("Child %d spawned.\n", pid);
 }
 
 static int parse_args(int argc, const char **argv) {
@@ -39,7 +41,7 @@ static void handle_connection(int comm_socket) {
 				requests::server::send_file(comm_socket, buffer.data());
 				break;
 			case requests::FILE_TRANSFER:
-				requests::server::store_file(comm_socket, buffer,bytes_count);
+				requests::server::store_file(comm_socket, buffer, bytes_count);
 				break;
 			default:
 				throw BaseException("Default in switch in handle connection", INTERNAL_ERROR);
@@ -49,17 +51,17 @@ static void handle_connection(int comm_socket) {
 		cerr << e.what();
 		string msg = requests::create_eror_msg(static_cast<requests::message_id>(e.getRetVal()));
 		cerr << msg;
-		sockets::send_message(comm_socket,msg);
+		sockets::send_message(comm_socket, msg);
 	}
 }
 
-static void lets_do_the_forknam_style(int comm_socket, int welcome_socket){
+static void lets_do_the_forknam_style(int comm_socket, int welcome_socket) {
 	int pid = fork();
-	if(pid < 0){
+	if (pid < 0) {
 		perror("fork failed");
-		throw BaseException("Forking failed",FORK_ERROR);
+		throw BaseException("Forking failed", FORK_ERROR);
 	}
-	if(pid == 0){
+	if (pid == 0) {
 		// child process
 		close(welcome_socket);
 		handle_connection(comm_socket);
@@ -93,7 +95,7 @@ int main(int argc, const char *argv[]) {
 
 		int welcome_socket = sockets::server::prepare_socket_and_int_vars(port_number, sa, rc);
 
-		signal(SIGCHLD,SigCatcher);
+		signal(SIGCHLD, SigCatcher);
 
 		// disable the endless loop warning
 		while (1) {
@@ -107,16 +109,19 @@ int main(int argc, const char *argv[]) {
 				puts(".");
 				cerr << "ERRROR: connection was not created successfully";
 			}
-			printf("Connection to %s closed\n", str);
+			if(DEBUG)
+				printf("Connection to %s closed\n", str);
 			close(comm_socket);
 		}
 	} catch (BaseException &e) {
 		cerr << "INFO: TOP LEVEL catch in main\n";
 		cerr << e.what();
+		requests::server::release_locks();
 		return e.getRetVal();
 	} catch (std::invalid_argument &e) {
 		cerr << "INFO: TOP LEVEL catch in main\n";
 		cerr << e.what() << endl;
+		requests::server::release_locks();
 		return WRONG_ARGUMENTS;
 	}
 }
