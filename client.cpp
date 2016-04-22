@@ -43,7 +43,7 @@ static inline int send_request(const sockets::SocketInfo &socketInfo, void (*req
 
 
 int main(int argc, const char *argv[]) {
-
+	// todo soubor by mel byt ulozen do aktualniho adresare, kde je klient, momentalne se ulozi do adresare, ze ktereho je spousten
 	using namespace sockets;
 
 	try {
