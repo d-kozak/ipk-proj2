@@ -53,7 +53,7 @@ static void handle_connection(int comm_socket) {
 	}
 }
 
-static void lets_do_the_fornam_style(int comm_socket,int welcome_socket){
+static void lets_do_the_forknam_style(int comm_socket, int welcome_socket){
 	int pid = fork();
 	if(pid < 0){
 		perror("fork failed");
@@ -100,7 +100,7 @@ int main(int argc, const char *argv[]) {
 			int comm_socket = accept(welcome_socket, (struct sockaddr *) &sa_client, &sa_client_len);
 			if (comm_socket > 0) {
 				log_connection(&sa_client, str);
-				lets_do_the_fornam_style(comm_socket,welcome_socket);
+				lets_do_the_forknam_style(comm_socket, welcome_socket);
 			}
 			else {
 				//throw BaseException("Connection was not created successfully",ERR_INTERNAL);

@@ -115,39 +115,5 @@ namespace sockets {
 	}
 }
 
-/**
- * Function prints the reponse without chunks into file output_file
- */
-/*
-static void print_without_chunk_numbers(vector<char> &data, ofstream &output_file) {
-	long i = 0, end = (int) data.size(), chunk_size;
-	vector<char> chunk_num;
-
-	size_t next_char;
-	// loop through the whole data vector
-	while (i < end) {
-		// parse the chunk size(it always ends with \r\n
-		while (data[i] != '\r') {
-			chunk_num.push_back(data[i]);
-			i++;
-		}
-		i += 2; //skip the "\r\n"
-
-		if (chunk_num.size() == 1 && chunk_num[0] == '0') // no more data to print
-			break;
-
-		// get the size of the current chunk
-		chunk_size = stol(chunk_num.data(), &next_char, 16);
-
-		std::copy(data.begin() + i, data.begin() + i + chunk_size, std::ostream_iterator<char>(output_file));
-
-		//jump to next chunk
-		i += chunk_size + 2;
-		// clear the vector for storing chunk_size;
-		chunk_num.clear();
-	}
-}
- */
-
 
 
