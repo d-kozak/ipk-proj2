@@ -40,7 +40,7 @@ ${CLIENT_NAME}: ${CLIENT_FILES}
 ${OBJ}: ${HEAD}
 
 distrib:
-	tar -cvzf xkozak15.tar.gz ${HEAD} ${SRC} ${TEST_FILES} Makefile 
+	tar -cvzf xkozak15.tar.gz ${HEAD} ${SRC} ${TEST_FILES} Makefile README protokol.pdf
 
 clean:
 	rm -f *.o ${CLIENT_NAME} ${SERVER_NAME}

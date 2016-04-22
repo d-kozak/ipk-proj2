@@ -46,7 +46,6 @@ namespace requests {
 		if (!in_file) {
 			throw BaseException("File " + file_url + " was not opened successfully", ERR_FILE_NOT_OPENED);
 		}
-		//string req = create_file_transfer_msg_including_file_content(file_url,);
 
 		// load content of file into vector
 		std::istreambuf_iterator<char> start(in_file), end;

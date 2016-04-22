@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 error() {
 	echo "Error: $1" >&2
 	exit $2
@@ -9,7 +7,7 @@ export FILES_DIR='testfiles'
 export DIR='testdir'
 export CLIENT_NAME='client'
 export SERVER_NAME='server'
-export PORT_NUM=$(shuf -i 10000-20000 -n 1)
+export PORT_NUM=$(awk 'BEGIN{srand();print int(rand()*(10000-1000))+1000 }')
 
 ./create_test_dirs.sh || exit 1
 
@@ -108,7 +106,7 @@ for client in $(find . -type f ! -name "*.*"); do
 	#to send all the files
 	for file in $(ls $FILES_DIR); do
 		client_name=${client##*/}
-		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${file} || error "Cannot start client - uploading ${file} was not successful" 
+		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${file} || error "Cannot start client - uploading ${file} was not successful"
 	done
 
 done
@@ -137,3 +135,5 @@ echo "--------FINAL TESTS-------"
 echo "--------END FINAL TESTS-------"
 
 kill -s SIGINT $(pidof ${SERVER_NAME})
+
+echo "Testing was successful"
