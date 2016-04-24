@@ -1,6 +1,10 @@
-//
-// Created by david on 10.3.16.
-//
+/*
+ * IPK 2 2016
+ * FTP server/client
+ * author: David Kozak, xkozak15@stud.fit.vutbr.cz
+ *
+ * this is module handles communication via TCP BSD sockets
+ */
 
 #include "socket_handler.h"
 

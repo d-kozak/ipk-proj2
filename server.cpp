@@ -1,10 +1,9 @@
 /*
- * IPK.2015L
+ * IPK 2 2016
+ * FTP server/client
+ * author: David Kozak, xkozak15@stud.fit.vutbr.cz
  *
- * Demonstration of trivial TCP communication.
- *
- * Ondrej Rysavy (rysavy@fit.vutbr.cz)
- *
+ * this is the main server module
  */
 
 #include <sys/wait.h>
@@ -16,12 +15,18 @@ extern const bool DEBUG;
 
 volatile sig_atomic_t flag = 0;
 
+/**
+ * function handles catching SIGCHILD signal, nothing really needs to be done here now
+ */
 void SigCatcher(int n) {
 	int pid = wait3(NULL, WNOHANG, NULL);
 	if (DEBUG)
 		printf("Child %d spawned.\n", pid);
 }
 
+/**
+ * function handles catching SIGINT signal, releases allocate locks and kills the proccess
+ */
 void SigIntCatch(int n){
 	std::cerr << "Received sigint, I will set the flag" << std::endl;
 	flag = 1;
@@ -29,6 +34,11 @@ void SigIntCatch(int n){
 	exit(1);
 }
 
+
+/**
+ * parse the arguments
+ * @return port number
+ */
 static int parse_args(int argc, const char **argv) {
 	if (argc != 3) {
 		throw std::invalid_argument("Wrong number of arguments, usage: server -p <port_number>");
@@ -39,11 +49,17 @@ static int parse_args(int argc, const char **argv) {
 	return std::stoi(argv[2]);
 }
 
+
+/**
+ * handles once connestion
+ */
 static void handle_connection(int comm_socket) {
 	vector<char> buffer;
 	buffer.resize(sockets::HEADER_SIZE);
+	// read first part of msg
 	ssize_t bytes_count = sockets::read_from_socket(comm_socket, sockets::HEADER_SIZE, buffer);
 
+	// then decide what to do...
 	try {
 		switch (requests::parse_response(buffer)) {
 			case requests::GET_FILE:
@@ -56,6 +72,7 @@ static void handle_connection(int comm_socket) {
 				throw BaseException("Default in switch in handle connection", INTERNAL_ERROR);
 		}
 	} catch (BaseException &e) {
+		// if there was a problem, simply send error msg back
 		cerr << "It appears there was a problem with this request..." << endl;
 		cerr << e.what();
 		string msg = requests::create_eror_msg(static_cast<requests::message_id>(e.getRetVal()));
@@ -64,6 +81,9 @@ static void handle_connection(int comm_socket) {
 	}
 }
 
+/*
+ * forks the server , child will handle the connection
+ */
 static void lets_do_the_forknam_style(int comm_socket, int welcome_socket) {
 	int pid = fork();
 	if (pid < 0) {
@@ -81,6 +101,9 @@ static void lets_do_the_forknam_style(int comm_socket, int welcome_socket) {
 
 }
 
+/**
+ * for debugging purposes only
+ */
 void log_connection(sockaddr_in6 *sa_client, char (&str)[INET6_ADDRSTRLEN]) {
 	if (inet_ntop(AF_INET6, &(sa_client->sin6_addr), str, sizeof(str))) {
 		if (DEBUG) {
@@ -107,7 +130,7 @@ int main(int argc, const char *argv[]) {
 		signal(SIGCHLD, SigCatcher);
 		signal(SIGINT, SigIntCatch);
 
-		// disable the endless loop warning
+		// main server loop - endless
 		while (1) {
 			if(flag){
 				std::cerr << "Termination flag is on, I will release locks and  shut myself down" << std::endl;

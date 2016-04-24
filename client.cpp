@@ -1,11 +1,11 @@
 /*
- * IPK.2015L
+ * IPK 2 2016
+ * FTP server/client
+ * author: David Kozak, xkozak15@stud.fit.vutbr.cz
  *
- * Demonstration of trivial TCP communication.
- *
- * Ondrej Rysavy (rysavy@fit.vutbr.cz)
- *
+ * this is the main client module
  */
+
 #include <stdexcept>
 #include "client.h"
 

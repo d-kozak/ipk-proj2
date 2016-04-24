@@ -1,7 +1,10 @@
-//
-// Created by david on 1.4.16.
-//
-
+/*
+ * IPK 2 2016
+ * FTP server/client
+ * author: David Kozak, xkozak15@stud.fit.vutbr.cz
+ *
+ * this is module handles communication via TCP BSD sockets
+ */
 #ifndef IPK_PROJ2_SOCKET_HANDLER_H
 #define IPK_PROJ2_SOCKET_HANDLER_H
 
@@ -17,10 +20,14 @@
 #include <netinet/in.h>
 #include <vector>
 
+/* true = print debug info */
 const bool DEBUG = false;
 
 using namespace std;
 
+/**
+ * return values
+ */
 enum ret_val {
 	EOK,
 	WRONG_ARGUMENTS,
@@ -34,6 +41,9 @@ enum ret_val {
 	INTERNAL_ERROR
 };
 
+/**
+ * the one and only exception to handle various errors
+ */
 class BaseException {
 	std::string msg;
 	int ret_val;
@@ -54,9 +64,14 @@ public:
 };
 
 namespace sockets {
+	/**size of one msg read from socket**/
 	const int BUFFER_SIZE = 2048;
+	/** the first msg can be shorter**/
 	const int HEADER_SIZE = 320;
 
+	/**
+	 * info about socket - hostname and port, used in client
+	 */
 	class SocketInfo {
 		string hostname;
 		int port;
@@ -105,6 +120,9 @@ namespace sockets {
 	ssize_t read_from_socket(int socket, unsigned long size, vector<char>& buffer);
 
 	namespace server{
+		/**
+		 * prepares socket for server
+		 */
 		int prepare_socket_and_int_vars(int port_number, sockaddr_in6 &sa, int &rc);
 	}
 }

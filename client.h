@@ -1,6 +1,10 @@
-//
-// Created by david on 30.3.16.
-//
+/*
+ * IPK 2 2016
+ * FTP server/client
+ * author: David Kozak, xkozak15@stud.fit.vutbr.cz
+ *
+ * this is the main client module
+ */
 
 #ifndef IPK_PROJ2_CLIENT_H
 #define IPK_PROJ2_CLIENT_H

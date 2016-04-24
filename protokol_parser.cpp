@@ -1,7 +1,11 @@
-//
-// Created by david on 30.3.16.
-//
-
+/*
+ * IPK 2 2016
+ * FTP server/client
+ * author: David Kozak, xkozak15@stud.fit.vutbr.cz
+ *
+ * this is module handles creating and parsing of protocol requests
+ * @see protokol.pdf
+ */
 #include <mutex>
 #include <map>
 #include "protokol_parser.h"
@@ -70,15 +74,10 @@ namespace requests {
 		ptr += strlen(str);
 		char *EOL = strchr(ptr, '\n');
 
-		//response.erase(response.begin(), ptr - response.data() + response.begin());
-		//response.erase(EOL - response.data() + response.begin(), response.end());
-
 		response.clear();
 		vector<char> tmp(ptr - response.data() + response.begin(), EOL - response.data() + response.begin());
 		response.assign(tmp.begin(), tmp.end());
 		response[tmp.size()] = '\0';
-		//cout << response.data() << endl;
-		//exit(1);
 	}
 
 	long remove_header_from_response(vector<char> &response, ssize_t &bytes_count) {
