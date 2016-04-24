@@ -191,8 +191,6 @@ namespace requests {
 	}
 
 	namespace server {
-		std::mutex main_lock;
-		std::map<std::string, std::mutex *> file_locks;
 
 		void release_locks(){
 			main_lock.lock();
@@ -246,6 +244,7 @@ namespace requests {
 				lock->unlock();
 				throw BaseException(e.what(),e.getRetVal());
 			}
+			lock->unlock();
 		}
 
 		void store_file(int socket, vector<char> &buffer, ssize_t sum_of_transfered_data) {
@@ -285,11 +284,13 @@ namespace requests {
 
 				string msg = requests::create_success_msg();
 				sockets::send_message(socket, msg);
+
 			} catch (BaseException & e){
 				// if anything went wrong, just unlock to lock and let the exception continue
 				lock->unlock();
 				throw BaseException(e.what(),e.getRetVal());
 			}
+			lock->unlock();
 		}
 	}
 }

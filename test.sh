@@ -87,15 +87,14 @@ for client in $(find . -type f ! -name "*.*"); do
 	for file in $(ls $FILES_DIR); do
 		client_name=${client##*/}
 		cp ${FILES_DIR}/$file ${FILES_DIR}/$client_name-${file}
-		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/$client_name-${file} || error "Cannot start client - uploading ${file} was not successful" 
-		rm ${FILES_DIR}/$client_name-${file}
+		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${client_name}-${file} || error "Cannot start client - uploading ${file} was not successful"
+		rm ${FILES_DIR}/${client_name}-${file}
 	done
 
 done
 rm *.png *.jpg *.txt
 echo "------------END STRESS TEST------------"
 echo ""
-
 echo "-------------SYNCHRONIZATION TEST------"
 
 #try all clients at once to upload the same file
