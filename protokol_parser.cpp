@@ -191,6 +191,8 @@ namespace requests {
 	}
 
 	namespace server {
+		std::mutex main_lock;
+		std::map<std::string,std::mutex*> file_locks;
 
 		void release_locks(){
 			main_lock.lock();

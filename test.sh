@@ -105,10 +105,29 @@ for client in $(find . -type f ! -name "*.*"); do
 	#to send all the files
 	for file in $(ls $FILES_DIR); do
 		client_name=${client##*/}
-		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${file} || error "Cannot start client - uploading ${file} was not successful"
+		./${client} -h localhost -p ${PORT_NUM} -u ${FILES_DIR}/${file} || error "Cannot start client - uploading ${file} was not successful" &
 	done
-
 done
+
+sleep 1
+ #now download the same file
+for client in $(ls -d client*); do
+	if [[ ${client} == './server' ]]; then
+		continue
+	fi
+	#to send all the files
+
+	cd $client
+	for file in $(ls ../$FILES_DIR); do
+			client_name=${client##*/}
+			./${client} -h localhost -p ${PORT_NUM} -d ${file} || error "Cannot start client - downloading ${file} was not successful" &
+	done
+	cd ..
+done
+
+echo "sleeping for five seconds to let the server handle everything"
+sleep 5
+echo "beep,beep,beep"
 
 for FILE in $(ls $FILES_DIR); do
 
