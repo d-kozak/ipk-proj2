@@ -134,7 +134,7 @@ echo "--------FINAL TESTS-------"
 
 echo "--------END FINAL TESTS-------"
 
-2>/dev/null 1>/dev/null kill -s SIGINT $(pgrep ${SERVER_NAME})
+2>/dev/null 1>/dev/null kill -s INT $(pgrep ${SERVER_NAME})
 if [ "$?" -ne 0 ] ; then
 	pid=$(ps -aux | grep 'xkozak15' | grep './server' | awk '{print $2}' | head -n 1)
 	2>/dev/null 1>/dev/null kill -s INT ${pid}
