@@ -1,12 +1,11 @@
-# IPK projekt 2 : Program for file transfer
-## Autor: David Kozák, xkozak15
-## Kontakt: xkozak15@stud.fit.vutbr.cz
+# Program for file transfer
+## Author: David Kozák, xkozak15
+## Contact: xkozak15@stud.fit.vutbr.cz
 
 Client server app written in C++ that allows file transfer. It uses a custom protocol that was designed as part of the assignment.
 
-Compilie the project using ```make```
+Compile the project using ```make```
 Clean the project using ```make clean```
-
 
 ## Files
 
@@ -20,12 +19,11 @@ Clean the project using ```make clean```
 
 * ./test.sh - test file demonstrating the funcionality
 
-* ./create_test_dirs.sh - helper script which creates the structure for testing
-	which looks as following
-		./testdir - root directory
-		./testdir/server - executable file starting the server
-		./testdir/client{1-9} - directories for individual clients
-		./testdir/testfiles - directory with files used in testing
+* ./create_test_dirs.sh - helper script which creates the structure for testing, which looks as following
+	* ./testdir - root directory
+	* ./testdir/server - executable file starting the server
+	* ./testdir/client{1-9} - directories for individual clients
+	* ./testdir/testfiles - directory with files used in testing
 
 * ./testfiles/* - files used in testing
 * ./Makefile 
